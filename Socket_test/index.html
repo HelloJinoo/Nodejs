@@ -18,21 +18,30 @@
   </head>
   <body>
     <ul id="messages"></ul>
+    <h2 id="mIp"></h2>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="http://jsgetip.appspot.com"></script> <!--외부 아이피주소를 가져오기위함-->
     <script>
+      var h2_for_ip = document.getElementById('mIp');
+      var ip = ip();  //외부 아이피를 가져옴
+      h2_for_ip.append(ip);
       $(() => {
         const socket = io();
+
         $('form').submit(() => {
-          socket.emit('chat message', $('#m').val());
+          var message = { 'dest_addr' : '192.168.0.2' , 'm' : $('#m').val() , 's' : socket.id };
+          socket.emit('chat message',message);
           $('#m').val('');
           return false;
         });
 
         socket.on('chat message', (msg) => {
+          console.log(msg);
           $('#messages').append($('<li>').text(msg));
         });
       });
